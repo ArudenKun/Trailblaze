@@ -1,0 +1,21 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Panel Background="White">
+            <SwitchPresenter
+                Margin="24"
+                TargetType="x:Int32"
+                Value="2">
+                <SwitchCase Value="1">1</SwitchCase>
+                <SwitchCase Value="2">222</SwitchCase>
+                <SwitchCase Value="3">3</SwitchCase>
+            </SwitchPresenter>
+        </Panel>
+    </Design.PreviewWith>
+    <ControlTheme x:Key="{x:Type SwitchPresenter}" TargetType="SwitchPresenter">
+        <Setter Property="Template">
+            <ControlTemplate>
+                <ContentPresenter Content="{TemplateBinding Content}" />
+            </ControlTemplate>
+        </Setter>
+    </ControlTheme>
+</ResourceDictionary>

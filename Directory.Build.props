@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <LangVersion>preview</LangVersion>
+    <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+    <!-- Metadata -->
+    <ProductName>Trailblaze</ProductName>
+    <Company>ArudenKun</Company>
+    <Authors>ArudenKun</Authors>
+    <Copyright>Copyright $([System.DateTime]::Now.ToString(`yyyy`)) © $(Company)</Copyright>
+    <Summary>Hoyoverse launcher made using avalonia</Summary>
+    <Description>Hoyoverse launcher made using avalonia</Description>
+    <Version>0.1.0</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'">
+    <IsRelease>true</IsRelease>
+  </PropertyGroup>
+</Project>
