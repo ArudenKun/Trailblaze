@@ -1,4 +1,3 @@
-using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using Avalonia;
@@ -7,9 +6,6 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
-using Trailblaze.Common.Extensions;
-using Trailblaze.Common.Helpers;
-using Trailblaze.Controls.WebView;
 using Trailblaze.ViewModels;
 
 namespace Trailblaze;
@@ -29,7 +25,7 @@ public sealed class App : Application
     {
         AvaloniaXamlLoader.Load(this);
 
-        NativeWebView.Options.UserDataFolder = PathHelper.CacheDirectory.CombinePath("webview2");
+        // NativeWebView.Options.UserDataFolder = PathHelper.CacheDirectory.CombinePath("webview2");
         DataTemplates.Add(_viewLocator);
     }
 

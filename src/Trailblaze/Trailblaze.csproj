@@ -6,6 +6,7 @@
     <BuiltInComInteropSupport>true</BuiltInComInteropSupport>
     <ApplicationManifest>app.manifest</ApplicationManifest>
     <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+    <NoWarn>$(NoWarn);AVLN3001</NoWarn>
   </PropertyGroup>
   <PropertyGroup Label="Publishing" Condition="$(IsRelease) == 'true'">
     <PublishTrimmed>true</PublishTrimmed>
@@ -45,7 +46,7 @@
     <PackageReference Include="SukiUI" Version="6.0.2" />
     <PackageReference Include="Svg.Controls.Avalonia" Version="11.3.0.1" />
     <PackageReference Include="Velopack" Version="0.0.1298" />
-    <PackageReference Include="WebView2.NativeAssets.Win32" Version="1.0.3240.44-d250526.1" />
+    <PackageReference Include="WebView2.Avalonia" Version="1.0.3240.44-preview.250526.1" />
     <PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.0.10" />
   </ItemGroup>
   <ItemGroup Label="Trimming">
@@ -55,5 +56,8 @@
   <ItemGroup>
     <ProjectReference Include="..\..\libs\Avalonia.Hosting\Avalonia.Hosting.csproj" />
     <ProjectReference Include="..\Trailblaze.Core\Trailblaze.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <AdditionalFiles Include="Properties\NativeMethods.txt" />
   </ItemGroup>
 </Project>

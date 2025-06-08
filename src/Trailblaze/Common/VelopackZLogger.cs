@@ -4,7 +4,7 @@ using Velopack;
 using Velopack.Logging;
 using ZLogger;
 
-namespace Trailblaze.Services;
+namespace Trailblaze.Common;
 
 public sealed class VelopackZLogger : IVelopackLogger
 {

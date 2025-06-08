@@ -47,12 +47,14 @@ public static partial class DependencyInjection
             .AddSingleton<IJsonTypeInfoResolver>(AppJsonContext.Default)
             .AddSingleton(AppJsonContext.Default.Options)
             .AddSingleton<AppSettings>()
+            .AddSingleton<ViewModelFactory>()
             .AddSingleton<VelopackZLogger>();
 
         builder.Services.AddHttpClient();
         builder.Services.AddSingleton(sp =>
-            new HttpCache(PathHelper.CacheDirectory.CombinePath("http"),
-                () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
+                new HttpCache(PathHelper.CacheDirectory.CombinePath("http"),
+                    () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()))
+            .AddSingleton<IHttpCache>(sp => sp.GetRequiredService<HttpCache>());
 
         return builder;
     }
@@ -102,7 +104,7 @@ public static partial class DependencyInjection
                 (in template, in info) => template.Format(info.Timestamp, info.LogLevel));
         });
     }
-    
+
     [GenerateServiceRegistrations(
         AssignableTo = typeof(ISingletonViewModel),
         CustomHandler = nameof(AddViewModelsHandler)

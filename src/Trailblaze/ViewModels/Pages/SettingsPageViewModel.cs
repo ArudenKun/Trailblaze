@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Avalonia.Media;
 using Avalonia.Styling;
@@ -35,7 +34,7 @@ public sealed partial class SettingsPageViewModel : PageViewModel, ITransientVie
     }
 
     public override string DisplayName => "Settings";
-    public override long Order => -1;
+    public override long Order => long.MaxValue;
     public override LucideIconKind Icon => LucideIconKind.Settings;
     public override bool AutoHideOnSideMenu => true;
 

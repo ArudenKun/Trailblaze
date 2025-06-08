@@ -1,37 +1,51 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using CommunityToolkit.Mvvm.ComponentModel;
-using CommunityToolkit.Mvvm.Input;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Messaging;
 using Trailblaze.Common.Settings;
-using Trailblaze.ViewModels.Pages;
-using ZLinq;
+using Trailblaze.Models.Messages;
+using Trailblaze.Services;
 
 namespace Trailblaze.ViewModels;
 
-public sealed partial class MainWindowViewModel : ViewModel, ISingletonViewModel
+public sealed partial class MainWindowViewModel
+    : ViewModel,
+        ISingletonViewModel,
+        IRecipient<OpenWebViewMessage>,
+        IRecipient<CloseWebViewMessage>
 {
-    public MainWindowViewModel(AppSettings appSettings, IEnumerable<PageViewModel> pages)
+    private readonly MainViewModel _mainViewModel;
+    private readonly ViewModelFactory _viewModelFactory;
+
+    public MainWindowViewModel(
+        AppSettings appSettings,
+        MainViewModel mainViewModel,
+        ViewModelFactory viewModelFactory
+    )
         : base(appSettings)
     {
-        Pages = [.. pages.OrderBy(s => s.Order)];
-        ActivePage = Pages[0];
+        Messenger.Register<OpenWebViewMessage>(this);
+        Messenger.Register<CloseWebViewMessage>(this);
+
+        _mainViewModel = mainViewModel;
+        _viewModelFactory = viewModelFactory;
+
+        ActiveContent = mainViewModel;
     }
 
-    public IReadOnlyList<PageViewModel> Pages { get; }
+    [ObservableProperty]
+    public partial ViewModel ActiveContent { get; set; }
 
     [ObservableProperty]
-    public partial PageViewModel ActivePage { get; set; }
+    public partial bool IsTransitionReversed { get; set; } = true;
 
-    [RelayCommand]
-    private void ShowSettings()
+    public void Receive(OpenWebViewMessage message)
     {
-        var settings = Pages
-            .AsValueEnumerable()
-            .FirstOrDefault(page => page is SettingsPageViewModel);
+        IsTransitionReversed = false;
+        ActiveContent = _viewModelFactory.CreateWebViewModel(message.Url);
+    }
 
-        if (settings is null)
-            return;
-
-        ActivePage = settings;
+    public void Receive(CloseWebViewMessage message)
+    {
+        IsTransitionReversed = true;
+        ActiveContent = _mainViewModel;
     }
 }

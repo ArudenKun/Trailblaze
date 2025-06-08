@@ -152,57 +152,9 @@
             </Button.Flyout>
         </Button>
     </suki:SukiWindow.RightWindowTitleBarControls>
-
-    <suki:SukiSideMenu
-        IsMenuExpanded="{Binding AppSettings.IsSideMenuExpanded}"
-        IsSearchEnabled="False"
-        ItemsSource="{Binding Pages}"
-        SelectedItem="{Binding ActivePage}">
-
-        <suki:SukiSideMenu.Styles>
-            <Style Selector="Image.AppIcon">
-                <Setter Property="Transitions">
-                    <Transitions>
-                        <DoubleTransition Property="Opacity" Duration="0.1" />
-                    </Transitions>
-                </Setter>
-                <Style Selector="^:pointerover">
-                    <Setter Property="Opacity" Value="0.5" />
-                </Style>
-            </Style>
-        </suki:SukiSideMenu.Styles>
-
-        <suki:SukiSideMenu.ItemTemplate>
-            <DataTemplate>
-                <!--  ReSharper disable once Xaml.StyleClassNotFound  -->
-                <suki:SukiSideMenuItem
-                    Classes="Compact"
-                    Header="{Binding DisplayName}"
-                    IsVisible="{Binding IsVisibleOnSideMenu}"
-                    ToolTip.ShowDelay="1000"
-                    ToolTip.Tip="{Binding DisplayName}">
-                    <suki:SukiSideMenuItem.Icon>
-                        <LucideIcon Kind="{Binding Icon}" />
-                    </suki:SukiSideMenuItem.Icon>
-                </suki:SukiSideMenuItem>
-            </DataTemplate>
-        </suki:SukiSideMenu.ItemTemplate>
-
-        <!-- <suki:SukiSideMenu.FooterContent> -->
-        <!--  <StackPanel  -->
-        <!--  HorizontalAlignment="Center"  -->
-        <!--  Orientation="Horizontal"  -->
-        <!--  Spacing="5">  -->
-        <!--    -->
-        <!--  ~1~  ReSharper disable once Xaml.StyleClassNotFound  @1@  -->
-        <!--  <Button  -->
-        <!--  Classes="Icon"  -->
-        <!--  Command="{Binding ShowSettingsCommand}"  -->
-        <!--  Content="{LucideIconContent Kind=Cog,  -->
-        <!--  Size=25}" />  -->
-        <!--    -->
-        <!--     </StackPanel> -->
-        <!-- </suki:SukiSideMenu.FooterContent> -->
-    </suki:SukiSideMenu>
-
+    <TransitioningContentControl Content="{Binding ActiveContent}" IsTransitionReversed="{Binding IsTransitionReversed}">
+        <TransitioningContentControl.PageTransition>
+            <PageSlide Orientation="Vertical" Duration="0:00:00.200" />
+        </TransitioningContentControl.PageTransition>
+    </TransitioningContentControl>
 </suki:SukiWindow>
