@@ -1,9 +1,9 @@
-﻿using System;
-using Avalonia.Controls;
+﻿using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using SukiUI.Enums;
 using Trailblaze.Common.Helpers;
+using Trailblaze.Core;
 using Trailblaze.Models;
 using ZLogger;
 
@@ -21,6 +21,9 @@ public sealed partial class AppSettings : JsonFile, IDisposable
 
         Load();
     }
+
+    [ObservableProperty]
+    public partial GameBiz Game { get; set; } = GameBiz.Genshin;
 
     [ObservableProperty]
     public partial ApplicationTheme Theme { get; set; } = ApplicationTheme.Default;
@@ -46,9 +49,6 @@ public sealed partial class AppSettings : JsonFile, IDisposable
     [ObservableProperty]
     public partial SukiBackgroundStyle BackgroundStyle { get; set; } =
         SukiBackgroundStyle.GradientSoft;
-
-    [ObservableProperty]
-    public partial TimeSpan ToastDismissAfter { get; set; } = TimeSpan.FromSeconds(3);
 
     [ObservableProperty]
     public partial WindowState LastWindowState { get; set; } = WindowState.Normal;

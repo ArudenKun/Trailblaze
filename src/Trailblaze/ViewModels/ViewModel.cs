@@ -1,9 +1,10 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using Microsoft.Extensions.DependencyInjection;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
+using Trailblaze.Avalonia.Hosting;
 using Trailblaze.Common.Settings;
 
 namespace Trailblaze.ViewModels;
@@ -19,15 +20,13 @@ public abstract partial class ViewModel : ObservableRecipient
     private static readonly Lazy<SukiDialogManager> LazySukiDialogManager = new();
     private static readonly Lazy<SukiToastManager> LazySukiToastManager = new();
 
-    protected ViewModel(AppSettings appSettings)
-    {
-        AppSettings = appSettings;
-    }
+    public ViewModel() { }
 
     public ISukiDialogManager DialogManager => LazySukiDialogManager.Value;
     public ISukiToastManager ToastManager => LazySukiToastManager.Value;
 
-    public AppSettings AppSettings { get; }
+    public AppSettings AppSettings { get; } =
+        App.Current.GetServiceProvider().GetRequiredService<AppSettings>();
 
     [ObservableProperty]
     public partial bool IsBusy { get; set; }

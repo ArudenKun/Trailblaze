@@ -1,6 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using Lucide.Avalonia;
-using Trailblaze.Common.Settings;
 
 namespace Trailblaze.ViewModels.Pages;
 
@@ -34,8 +33,7 @@ public interface IPageViewModel : IViewModel
 
 public abstract partial class PageViewModel : ViewModel, IPageViewModel
 {
-    public PageViewModel(AppSettings appSettings)
-        : base(appSettings) { }
+    public PageViewModel() { }
 
     /// <inheritdoc />
     public abstract string DisplayName { get; }

@@ -1,6 +1,10 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Avalonia;
+using Avalonia.Controls.Notifications;
+using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using CommunityToolkit.Mvvm.Messaging;
-using Trailblaze.Common.Settings;
+using SukiUI.Dialogs;
+using Trailblaze.Common.Extensions;
 using Trailblaze.Models.Messages;
 using Trailblaze.Services;
 
@@ -15,12 +19,7 @@ public sealed partial class MainWindowViewModel
     private readonly MainViewModel _mainViewModel;
     private readonly ViewModelFactory _viewModelFactory;
 
-    public MainWindowViewModel(
-        AppSettings appSettings,
-        MainViewModel mainViewModel,
-        ViewModelFactory viewModelFactory
-    )
-        : base(appSettings)
+    public MainWindowViewModel(MainViewModel mainViewModel, ViewModelFactory viewModelFactory)
     {
         Messenger.Register<OpenWebViewMessage>(this);
         Messenger.Register<CloseWebViewMessage>(this);
@@ -37,6 +36,8 @@ public sealed partial class MainWindowViewModel
     [ObservableProperty]
     public partial bool IsTransitionReversed { get; set; } = true;
 
+    public bool IsConfirmedClose { get; private set; }
+
     public void Receive(OpenWebViewMessage message)
     {
         IsTransitionReversed = false;
@@ -47,5 +48,32 @@ public sealed partial class MainWindowViewModel
     {
         IsTransitionReversed = true;
         ActiveContent = _mainViewModel;
+    }
+
+    [RelayCommand]
+    private void OpenSetting()
+    {
+        Messenger.Send<OpenSettingsMessage>();
+    }
+
+    [RelayCommand]
+    private void TryClose()
+    {
+        DialogManager.DismissDialog();
+        DialogManager
+            .CreateDialog()
+            .OfType(NotificationType.Warning)
+            .WithTitle("Close")
+            .WithContent("Do you really want to exit?")
+            .WithActionButton(
+                "Yes",
+                _ =>
+                {
+                    IsConfirmedClose = true;
+                    Application.Current?.ApplicationLifetime?.TryShutdown();
+                }
+            )
+            .WithActionButton("No", _ => { }, true)
+            .TryShow();
     }
 }

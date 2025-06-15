@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using Trailblaze.Common.Extensions;
 using Velopack.Locators;
 
@@ -36,9 +35,13 @@ public static class PathHelper
     /// </summary>
     public static string DataDirectory =>
         // File.Exists(".portable") || Directory.Exists("data")
+#if DEBUG
+        AppDirectory.CombinePath("data");
+#else
         Locator.IsPortable
             ? AppDirectory.CombinePath("data")
             : RoamingDirectory.CombinePath(AppInformation.Name);
+#endif
 
     public static string CacheDirectory => DataDirectory.CombinePath("cache");
 

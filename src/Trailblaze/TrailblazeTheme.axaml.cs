@@ -3,7 +3,7 @@ using Avalonia.Styling;
 
 namespace Trailblaze;
 
-public class TrailblazeTheme : Styles
+public sealed class TrailblazeTheme : Styles
 {
     public TrailblazeTheme()
     {

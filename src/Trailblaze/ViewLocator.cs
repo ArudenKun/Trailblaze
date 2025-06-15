@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Concurrent;
 using Avalonia.Controls;
 using Avalonia.Controls.Templates;
@@ -70,9 +69,6 @@ public sealed class ViewLocator : IDataTemplate
 
     public static void BindEvents(Control control, ViewModel viewModel)
     {
-        ArgumentNullException.ThrowIfNull(viewModel);
-        ArgumentNullException.ThrowIfNull(control);
-
         control.Loaded += Loaded;
         control.Unloaded += Unloaded;
         return;

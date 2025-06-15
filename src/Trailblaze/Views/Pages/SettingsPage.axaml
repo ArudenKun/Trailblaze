@@ -177,7 +177,7 @@
                                     <DockPanel>
                                         <ComboBox
                                             DockPanel.Dock="Right"
-                                            ItemsSource="{Binding AppSettings.BackgroundStyle, Converter={StaticResource RawEnumToCollectionConverter}, Mode=OneTime}"
+                                            ItemsSource="{Binding AppSettings.BackgroundStyle, Converter={StaticResource EnumToCollectionConverter}, Mode=OneTime}"
                                             SelectedItem="{Binding AppSettings.BackgroundStyle, Converter={StaticResource FromStringToEnumConverter}}" />
                                         <StackPanel HorizontalAlignment="Left">
                                             <TextBlock

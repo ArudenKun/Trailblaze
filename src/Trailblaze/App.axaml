@@ -6,9 +6,8 @@
     RequestedThemeVariant="Default">
 
     <Application.Resources>
-        <RawEnumToCollectionConverter x:Key="RawEnumToCollectionConverter" />
-        <FromStringToEnumConverter x:Key="FromStringToEnumConverter" />
         <EnumToCollectionConverter x:Key="EnumToCollectionConverter" />
+        <FromStringToEnumConverter x:Key="FromStringToEnumConverter" />
     </Application.Resources>
 
     <Application.Styles>

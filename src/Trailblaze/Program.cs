@@ -1,10 +1,9 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using Avalonia;
-using Avalonia.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Trailblaze.Avalonia.Hosting;
 using Trailblaze.Common;
 using Velopack;
 using Windows.Win32;
@@ -24,7 +23,16 @@ public static class Program
     {
         VelopackApp.Build().Run();
         var builder = Host.CreateApplicationBuilder(args);
-        builder.AddAvaloniaHosting<App>(appBuilder => appBuilder.UsePlatformDetect().LogToTrace());
+        builder.AddAvaloniaHosting<App>(
+            (sp, appBuilder) =>
+                appBuilder
+                    .UsePlatformDetect()
+                    .UseR3(ex =>
+                        sp.GetRequiredService<ILogger<App>>()
+                            .ZLogError(ex, $"An unhandled exception occurred")
+                    )
+                    .LogToTrace()
+        );
         builder.AddTrailblaze();
 
         var app = builder.Build();

@@ -1,33 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.Linq;
-using Trailblaze.Models;
 
 namespace Trailblaze.Common.Extensions;
 
 public static class EnumExtensions
 {
-    public static string GetDescription(this Enum value)
-    {
-        var attributes = value
-            .GetType()
-            .GetField(value.ToString())
-            ?.GetCustomAttributes(typeof(DescriptionAttribute), false);
-
-        if (attributes is not null && attributes.Length > 0)
-        {
-            if (attributes[0] is DescriptionAttribute attr)
-                return attr.Description;
-        }
-
-        // If no description is found, the least we can do is replace underscores with spaces
-        // You can add your own custom default formatting logic here
-        var ti = CultureInfo.CurrentCulture.TextInfo;
-        return ti.ToTitleCase(ti.ToLower(value.ToString().Replace("_", " ")));
-    }
-
     public static IEnumerable<Enum> GetAllValues(this Type t, bool orderByName = false)
     {
         if (!t.IsEnum)
@@ -43,15 +20,6 @@ public static class EnumExtensions
     {
         var values = Enum.GetValues<TEnum>();
         return orderByName ? values.OrderBy(e => e.ToString(), StringComparer.Ordinal) : values;
-    }
-
-    public static IEnumerable<ValueDescription> GetAllValuesAndDescriptions(
-        this Type t,
-        bool orderByName = false
-    )
-    {
-        return GetAllValues(t, orderByName)
-            .Select(e => new ValueDescription(e, e.GetDescription()));
     }
 
     /// <summary>

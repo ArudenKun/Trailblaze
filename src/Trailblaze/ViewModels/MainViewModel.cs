@@ -1,25 +1,25 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using CommunityToolkit.Mvvm.Messaging;
 using Microsoft.Extensions.Logging;
-using Trailblaze.Common.Settings;
+using Trailblaze.Models.Messages;
 using Trailblaze.ViewModels.Pages;
 using ZLinq;
 using ZLogger;
 
 namespace Trailblaze.ViewModels;
 
-public sealed partial class MainViewModel : ViewModel, ISingletonViewModel
+public sealed partial class MainViewModel
+    : ViewModel,
+        IRecipient<OpenSettingsMessage>,
+        ISingletonViewModel
 {
-    public MainViewModel(
-        AppSettings appSettings,
-        IEnumerable<PageViewModel> pages,
-        ILogger<MainViewModel> logger
-    )
-        : base(appSettings)
+    public MainViewModel(IEnumerable<PageViewModel> pages, ILogger<MainViewModel> logger)
     {
+        Messenger.Register(this);
         Pages = [.. pages.AsValueEnumerable().OrderBy(s => s.Order)];
+
         foreach (var (i, page) in Pages.AsValueEnumerable().Index())
         {
             logger.ZLogInformation($"Page {i + 1}: {page.DisplayName}");
@@ -32,6 +32,11 @@ public sealed partial class MainViewModel : ViewModel, ISingletonViewModel
 
     [ObservableProperty]
     public partial PageViewModel ActivePage { get; set; }
+
+    public void Receive(OpenSettingsMessage message)
+    {
+        ShowSettings();
+    }
 
     [RelayCommand]
     private void ShowSettings()

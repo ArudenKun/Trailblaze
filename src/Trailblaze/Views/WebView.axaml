@@ -18,10 +18,7 @@
             Content="Close" />
         <DelayedContentControl Grid.Row="1" Delay="0:00:00.400">
             <DelayedContentControl.ActualContent>
-                <wv2:WebView2
-                    Grid.Row="1"
-                    CreationProperties="{Binding CreationProperties}"
-                    Source="{Binding Url}" />
+                <wv2:WebView2 Grid.Row="1" Source="{Binding Url}" />
             </DelayedContentControl.ActualContent>
         </DelayedContentControl>
     </Grid>

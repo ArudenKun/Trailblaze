@@ -1,5 +1,4 @@
-﻿using System;
-using SukiUI.Controls;
+﻿using SukiUI.Controls;
 using Trailblaze.ViewModels;
 
 namespace Trailblaze.Views.Abstractions;

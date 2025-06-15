@@ -1,11 +1,16 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Linq;
+using AsyncImageLoader;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data.Core.Plugins;
 using Avalonia.Markup.Xaml;
 using Microsoft.Extensions.DependencyInjection;
+using Trailblaze.Common.Helpers;
+using Trailblaze.Localization;
+using Trailblaze.Services;
+using Trailblaze.Translations;
 using Trailblaze.ViewModels;
 
 namespace Trailblaze;
@@ -14,18 +19,37 @@ public sealed class App : Application
 {
     private readonly ViewLocator _viewLocator;
     private readonly IServiceProvider _serviceProvider;
+    private readonly ReplicantImageLoader _replicantImageLoader;
 
-    public App(ViewLocator viewLocator, IServiceProvider serviceProvider)
+    // ReSharper disable once ArrangeModifiersOrder
+    public static new App Current => (App)Application.Current!;
+
+    public App(
+        ViewLocator viewLocator,
+        IServiceProvider serviceProvider,
+        ReplicantImageLoader replicantImageLoader
+    )
     {
         _viewLocator = viewLocator;
         _serviceProvider = serviceProvider;
+        _replicantImageLoader = replicantImageLoader;
     }
 
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
 
-        // NativeWebView.Options.UserDataFolder = PathHelper.CacheDirectory.CombinePath("webview2");
+        Localizer.SetLocalizer(new ResXLocalizer());
+
+        Environment.SetEnvironmentVariable(
+            "WEBVIEW2_USER_DATA_FOLDER",
+            PathHelper.CacheDirectory,
+            EnvironmentVariableTarget.Process
+        );
+
+        ImageLoader.AsyncImageLoader = _replicantImageLoader;
+        ImageBrushLoader.AsyncImageLoader = _replicantImageLoader;
+
         DataTemplates.Add(_viewLocator);
     }
 

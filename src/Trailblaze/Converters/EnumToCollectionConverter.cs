@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Globalization;
 using Avalonia.Data.Converters;
 using Trailblaze.Common.Extensions;
 
@@ -10,24 +10,20 @@ public class EnumToCollectionConverter : IValueConverter
         object? value,
         Type targetType,
         object? parameter,
-        System.Globalization.CultureInfo culture
-    )
-    {
-        if (value is not Enum)
-            return null;
-        var orderByName = System.Convert.ToBoolean(parameter);
-        return value.GetType().GetAllValuesAndDescriptions(orderByName);
-    }
+        CultureInfo culture
+    ) => value is not Enum @enum ? null : @enum.GetType().GetAllValues();
 
     public object? ConvertBack(
         object? value,
         Type targetType,
         object? parameter,
-        System.Globalization.CultureInfo culture
+        CultureInfo culture
     )
     {
-        return null;
-        //string parameterString = parameter.ToString();
-        //return Enum.Parse(targetType, parameterString);
+        var parameterString = parameter?.ToString();
+        if (string.IsNullOrWhiteSpace(parameterString))
+            return null;
+
+        return Enum.TryParse(targetType, parameterString, true, out var result) ? result : null;
     }
 }

@@ -7,15 +7,13 @@ using CommunityToolkit.Mvvm.Input;
 using Lucide.Avalonia;
 using SukiUI;
 using SukiUI.Models;
-using Trailblaze.Common.Settings;
 using Trailblaze.Models;
 
 namespace Trailblaze.ViewModels.Pages;
 
 public sealed partial class SettingsPageViewModel : PageViewModel, ITransientViewModel
 {
-    public SettingsPageViewModel(AppSettings appSettings)
-        : base(appSettings)
+    public SettingsPageViewModel()
     {
         Theme = SukiTheme.GetInstance();
         AvailableColors =
@@ -26,9 +24,9 @@ public sealed partial class SettingsPageViewModel : PageViewModel, ITransientVie
             new SukiColorTheme("Black", new Color(255, 0, 0, 0), new Color(255, 255, 255, 255)),
         ];
 
-        IsSystemTheme = appSettings.Theme is ApplicationTheme.Default;
-        IsLightTheme = appSettings.Theme is ApplicationTheme.Light;
-        IsDarkTheme = appSettings.Theme is ApplicationTheme.Dark;
+        IsSystemTheme = AppSettings.Theme is ApplicationTheme.Default;
+        IsLightTheme = AppSettings.Theme is ApplicationTheme.Light;
+        IsDarkTheme = AppSettings.Theme is ApplicationTheme.Dark;
 
         IsVisibleOnSideMenu = false;
     }

@@ -1,5 +1,5 @@
-﻿using System;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Net.Http;
 using System.Text.Json.Serialization.Metadata;
 using Avalonia.Controls;
@@ -13,6 +13,7 @@ using Trailblaze.Common;
 using Trailblaze.Common.Extensions;
 using Trailblaze.Common.Helpers;
 using Trailblaze.Common.Settings;
+using Trailblaze.Core.HoyoPlay;
 using Trailblaze.Services;
 using Trailblaze.ViewModels;
 using Trailblaze.Views.Abstractions;
@@ -48,51 +49,19 @@ public static partial class DependencyInjection
             .AddSingleton(AppJsonContext.Default.Options)
             .AddSingleton<AppSettings>()
             .AddSingleton<ViewModelFactory>()
-            .AddSingleton<VelopackZLogger>();
-
-        builder.Services.AddHttpClient();
-        builder.Services.AddSingleton(sp =>
-                new HttpCache(PathHelper.CacheDirectory.CombinePath("http"),
+            .AddSingleton<ReplicantImageLoader>()
+            .AddSingleton(sp =>
+                new HttpCache(PathHelper.CacheDirectory,
                     () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()))
             .AddSingleton<IHttpCache>(sp => sp.GetRequiredService<HttpCache>());
 
-        return builder;
-    }
-
-    public static IHostBuilder ConfigureTrailblaze(this IHostBuilder builder)
-    {
-        builder.ConfigureLogging(loggingBuilder =>
-        {
-            loggingBuilder.ClearProviders()
-                .SetMinimumLevel(LogLevel.Debug)
-                .AddZLoggerConsole(options => options.UseDefaultPlainTextFormatter())
-                .AddZLoggerRollingFile((options) =>
-                {
-                    options.FilePathSelector = (timestamp, sequenceNumber) =>
-                        PathHelper.LogsDirectory.CombinePath(
-                            $"{timestamp.ToLocalTime():yyyy-MM}_{sequenceNumber:000}.log"
-                        );
-                    options.RollingInterval = RollingInterval.Month;
-                    options.RollingSizeKB = (int)2.Gigabytes().Kilobytes;
-                    options.UseDefaultPlainTextFormatter();
-                });
-        });
-        builder.ConfigureServices((_, services) =>
-        {
-            services
-                .AddViews()
-                .AddViewModels()
-                .AddSingleton<ViewLocator>()
-                .AddSingleton<IJsonTypeInfoResolver>(AppJsonContext.Default)
-                .AddSingleton(AppJsonContext.Default.Options)
-                .AddSingleton<AppSettings>()
-                .AddSingleton<VelopackZLogger>();
-
-            services.AddHttpClient();
-            services.AddSingleton(sp =>
-                new HttpCache(PathHelper.CacheDirectory.CombinePath("http"),
-                    () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()));
-        });
+        builder.Services.AddHttpClient();
+        builder.Services.AddHttpClient<HoyoPlayClient>()
+            .ConfigureHttpClient(httpClient => httpClient.DefaultRequestVersion = HttpVersion.Version20)
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                AutomaticDecompression = DecompressionMethods.All
+            });
         return builder;
     }
 
@@ -123,7 +92,7 @@ public static partial class DependencyInjection
             ? ServiceLifetime.Singleton
             : ServiceLifetime.Transient;
         services.Add(new ServiceDescriptor(type, type, lifeTime));
-        foreach (var baseType in type.GetBaseTypes())
+        foreach (var baseType in type.EnumerateBaseTypes())
         {
             services.Add(new ServiceDescriptor(
                 baseType,

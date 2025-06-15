@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace Trailblaze.Common;
+﻿namespace Trailblaze.Common;
 
 public static class AppInformation
 {

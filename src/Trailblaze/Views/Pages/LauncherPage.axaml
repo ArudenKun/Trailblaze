@@ -12,5 +12,13 @@
     <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
         <TextBlock Text="Open Daily Check In" />
         <Button Command="{Binding OpenDailyCheckInCommand}" Content="Open" />
+        <ComboBox
+            DisplayMemberBinding="{Binding Title}"
+            ItemsSource="{Binding Games}"
+            SelectedItem="{Binding AppSettings.Game}" />
+        <ComboBox
+            DisplayMemberBinding="{Binding Server}"
+            ItemsSource="{Binding Games}"
+            SelectedItem="{Binding AppSettings.Game}" />
     </StackPanel>
 </UserControl>
