@@ -6,12 +6,12 @@ namespace Trailblaze.Localization;
 public abstract class BaseLocalizer : ILocalizer
 {
     // Fallback language when the current language is not found
-    public string FallbackLanguage { get; set; } = CultureInfo.GetCultureInfo("en-US").Name;
+    public CultureInfo FallbackLanguage { get; set; } = CultureInfo.GetCultureInfo("en-US");
 
-    protected List<string> CurrentLanguages { get; } = [];
+    protected List<CultureInfo> CurrentLanguages { get; } = [];
 
     // List of available languages, e.g. ["en", "zh"]
-    public List<string> Languages
+    public IReadOnlyList<CultureInfo> Languages
     {
         get
         {
@@ -26,15 +26,15 @@ public abstract class BaseLocalizer : ILocalizer
     public ObservableCollection<string> DisplayLanguages { get; } =
         new FastObservableCollection<string>();
 
-    protected string CurrentLanguage { get; set; } = CultureInfo.CurrentCulture.Name;
+    protected CultureInfo CurrentLanguage { get; set; } = CultureInfo.CurrentCulture;
 
     // Current language, e.g. "en"
-    public string Language
+    public CultureInfo Language
     {
         get => CurrentLanguage;
         set
         {
-            if (CurrentLanguage == value)
+            if (EqualityComparer<CultureInfo>.Default.Equals(CurrentLanguage, value))
                 return;
 
             CurrentLanguage = value;
@@ -75,7 +75,7 @@ public abstract class BaseLocalizer : ILocalizer
 
         languageIndex = CurrentLanguages.IndexOf(FallbackLanguage);
         if (languageIndex == -1)
-            throw new KeyNotFoundException(CurrentLanguage);
+            throw new KeyNotFoundException(CurrentLanguage.Name);
 
         LanguageIndex = languageIndex;
         CurrentLanguage = FallbackLanguage;
@@ -84,7 +84,7 @@ public abstract class BaseLocalizer : ILocalizer
     // Must be called after _languages are changed or translation is changed
     protected void UpdateDisplayLanguages()
     {
-        var displayLanguages = Languages.Select(Get).ToList();
+        var displayLanguages = Languages.Select(ci => ci.EnglishName).ToList();
         if (!displayLanguages.SequenceEqual(DisplayLanguages))
             ((IFastObservableCollection)DisplayLanguages).Replace(displayLanguages);
     }

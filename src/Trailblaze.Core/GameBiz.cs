@@ -1,22 +1,23 @@
-﻿using System.Collections.Frozen;
-using Ardalis.SmartEnum;
-using Trailblaze.Localization;
-using Trailblaze.Translations;
+﻿using Ardalis.SmartEnum;
 
 namespace Trailblaze.Core;
 
 public abstract class GameBiz : SmartEnum<GameBiz, string>
 {
+    #region Genshin
+
     public static readonly GameBiz Genshin = new GenshinBiz("hk4e", GameServer.None);
-
     public static readonly GameBiz GenshinGlobal = new GenshinBiz("hk4e_global", GameServer.Global);
-
     public static readonly GameBiz GenshinChina = new GenshinBiz("hk4e_cn", GameServer.China);
 
     public static readonly GameBiz GenshinBilibili = new GenshinBiz(
         "hk4e_bilibili",
         GameServer.Bilibili
     );
+
+    #endregion
+
+    #region StarRail
 
     public static readonly GameBiz StarRail = new StarRailBiz("hkrpg", GameServer.None);
 
@@ -32,6 +33,10 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
         GameServer.Bilibili
     );
 
+    #endregion
+
+    #region Zenless
+
     public static readonly GameBiz Zenless = new ZenlessBiz("nap", GameServer.None);
     public static readonly GameBiz ZenlessGlobal = new ZenlessBiz("nap_global", GameServer.Global);
     public static readonly GameBiz ZenlessChina = new ZenlessBiz("nap_cn", GameServer.China);
@@ -41,20 +46,18 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
         GameServer.Bilibili
     );
 
+    #endregion
+
+
     private GameBiz(string value, GameServer server)
         : base(value, value)
     {
         Server = server;
     }
 
-    public GameServer Server { get; }
-
     public abstract Game Game { get; }
 
-    public abstract string Title { get; }
-
-    public virtual FrozenSet<GameServer> AvailableServers { get; } =
-        [GameServer.Global, GameServer.China, GameServer.Bilibili];
+    public GameServer Server { get; }
 
     public bool IsKnown() =>
         this == GenshinGlobal
@@ -73,7 +76,6 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
             : base(value, server) { }
 
         public override Game Game => Game.Genshin;
-        public override string Title => Localizer.Get(TranslationKey.GenshinTitle);
     }
 
     private sealed class StarRailBiz : GameBiz
@@ -82,7 +84,6 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
             : base(value, server) { }
 
         public override Game Game => Game.StarRail;
-        public override string Title => Localizer.Get(TranslationKey.StarRailTitle);
     }
 
     private sealed class ZenlessBiz : GameBiz
@@ -91,6 +92,5 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
             : base(value, server) { }
 
         public override Game Game => Game.Zenless;
-        public override string Title => Localizer.Get(TranslationKey.ZenlessTitle);
     }
 }

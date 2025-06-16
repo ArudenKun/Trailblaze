@@ -1,4 +1,6 @@
-﻿using Avalonia.Controls;
+﻿using System.Text.Json.Serialization;
+using Ardalis.SmartEnum.SystemTextJson;
+using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.Logging;
 using SukiUI.Enums;
@@ -23,13 +25,14 @@ public sealed partial class AppSettings : JsonFile, IDisposable
     }
 
     [ObservableProperty]
-    public partial GameBiz Game { get; set; } = GameBiz.Genshin;
+    [JsonConverter(typeof(SmartEnumNameConverter<GameBiz, string>))]
+    public partial GameBiz GameBiz { get; set; } = GameBiz.GenshinGlobal;
 
     [ObservableProperty]
     public partial ApplicationTheme Theme { get; set; } = ApplicationTheme.Default;
 
     [ObservableProperty]
-    public partial string ThemeColor { get; set; } = string.Empty;
+    public partial string ThemeColor { get; set; } = nameof(SukiColor.Blue);
 
     [ObservableProperty]
     public partial bool CheckForUpdates { get; set; } = true;

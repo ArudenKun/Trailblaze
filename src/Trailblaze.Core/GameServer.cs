@@ -1,5 +1,4 @@
-﻿using System.Collections.Frozen;
-using Ardalis.SmartEnum;
+﻿using Ardalis.SmartEnum;
 
 namespace Trailblaze.Core;
 
@@ -18,8 +17,6 @@ public sealed class GameServer : SmartEnum<GameServer, string>
     public static readonly GameServer Asia = new(nameof(Asia), "asia");
 
     #endregion
-
-    public static readonly FrozenSet<GameServer> DefaultServers = [Global, China, Bilibili];
 
     private GameServer(string name, string value)
         : base(name, value) { }

@@ -1,15 +1,16 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Trailblaze.Localization;
 
 public interface ILocalizer
 {
     void Reload();
-    List<string> Languages { get; }
+    IReadOnlyList<CultureInfo> Languages { get; }
     ObservableCollection<string> DisplayLanguages { get; }
-    string Language { get; set; }
+    CultureInfo Language { get; set; }
     int LanguageIndex { get; set; }
-    string FallbackLanguage { get; set; }
+    CultureInfo FallbackLanguage { get; set; }
     string Get(string key);
     event EventHandler? LanguageChanged;
 }

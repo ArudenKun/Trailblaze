@@ -1,4 +1,5 @@
 ﻿using System.Collections.ObjectModel;
+using System.Globalization;
 
 namespace Trailblaze.Localization;
 
@@ -11,11 +12,11 @@ public static class Localizer
         Current = localizer;
     }
 
-    public static List<string> Languages => Current.Languages;
+    public static IReadOnlyList<CultureInfo> Languages => Current.Languages;
 
     public static ObservableCollection<string> DisplayLanguages => Current.DisplayLanguages;
 
-    public static string Language
+    public static CultureInfo Language
     {
         get => Current.Language;
         set => Current.Language = value;

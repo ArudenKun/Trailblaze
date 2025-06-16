@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using AsyncImageLoader;
 using Avalonia;
@@ -40,6 +41,8 @@ public sealed class App : Application
         AvaloniaXamlLoader.Load(this);
 
         Localizer.SetLocalizer(new ResXLocalizer());
+        Localizer.Language = CultureInfo.GetCultureInfo("en-US");
+        Localizer.LanguageIndex = 0;
 
         Environment.SetEnvironmentVariable(
             "WEBVIEW2_USER_DATA_FOLDER",

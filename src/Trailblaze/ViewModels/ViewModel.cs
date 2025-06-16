@@ -2,6 +2,7 @@
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using Microsoft.Extensions.DependencyInjection;
+using R3;
 using SukiUI.Dialogs;
 using SukiUI.Toasts;
 using Trailblaze.Avalonia.Hosting;
@@ -15,15 +16,17 @@ public interface ITransientViewModel : IViewModel;
 
 public interface IViewModel;
 
-public abstract partial class ViewModel : ObservableRecipient
+public abstract partial class ViewModel : ObservableRecipient, IDisposable
 {
     private static readonly Lazy<SukiDialogManager> LazySukiDialogManager = new();
     private static readonly Lazy<SukiToastManager> LazySukiToastManager = new();
 
-    public ViewModel() { }
+    private bool _isDisposed;
 
     public ISukiDialogManager DialogManager => LazySukiDialogManager.Value;
     public ISukiToastManager ToastManager => LazySukiToastManager.Value;
+
+    public CompositeDisposable Disposables { get; } = new();
 
     public AppSettings AppSettings { get; } =
         App.Current.GetServiceProvider().GetRequiredService<AppSettings>();
@@ -66,15 +69,26 @@ public abstract partial class ViewModel : ObservableRecipient
 
     protected void OnAllPropertiesChanged() => OnPropertyChanged(string.Empty);
 
-    // ~ViewModel() => Dispose(false);
-    //
-    // /// <inheritdoc cref="Dispose"/>>
-    // protected virtual void Dispose(bool disposing) { }
-    //
-    // /// <inheritdoc />>
-    // public void Dispose()
-    // {
-    //     Dispose(true);
-    //     GC.SuppressFinalize(this);
-    // }
+    ~ViewModel() => Dispose(false);
+
+    /// <inheritdoc cref="Dispose"/>>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (_isDisposed)
+            return;
+
+        if (!disposing)
+            return;
+
+        Disposables.Dispose();
+
+        _isDisposed = true;
+    }
+
+    /// <inheritdoc />>
+    public void Dispose()
+    {
+        Dispose(true);
+        GC.SuppressFinalize(this);
+    }
 }

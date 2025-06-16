@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Globalization;
+using System.Text.Json;
 
 namespace Trailblaze.Localization;
 
@@ -24,7 +25,8 @@ public class JsonLocalizer : BaseLocalizer
         foreach (var file in Directory.GetFiles(_languageJsonDirectory, "*.json"))
         {
             var language = Path.GetFileNameWithoutExtension(file);
-            CurrentLanguages.Add(language);
+            var culture = CultureInfo.GetCultureInfo(language);
+            CurrentLanguages.Add(culture);
         }
 
         ValidateLanguage();

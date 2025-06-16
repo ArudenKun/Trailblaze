@@ -2,8 +2,11 @@
     x:Class="Trailblaze.Views.Pages.LauncherPage"
     xmlns="https://github.com/avaloniaui"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:core="using:Trailblaze.Core"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:localization="clr-namespace:Trailblaze.Localization;assembly=Trailblaze.Localization"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:translations="using:Trailblaze.Translations"
     xmlns:vmp="clr-namespace:Trailblaze.ViewModels.Pages"
     d:DesignHeight="450"
     d:DesignWidth="800"
@@ -14,11 +17,16 @@
         <Button Command="{Binding OpenDailyCheckInCommand}" Content="Open" />
         <ComboBox
             DisplayMemberBinding="{Binding Title}"
-            ItemsSource="{Binding Games}"
-            SelectedItem="{Binding AppSettings.Game}" />
+            ItemsSource="{x:Static core:Game.Games}"
+            SelectedItem="{Binding SelectedGame}" />
         <ComboBox
-            DisplayMemberBinding="{Binding Server}"
-            ItemsSource="{Binding Games}"
-            SelectedItem="{Binding AppSettings.Game}" />
+            DisplayMemberBinding="{Binding Name}"
+            ItemsSource="{Binding SelectedGame.Servers}"
+            SelectedItem="{Binding SelectedGameServer}" />
+        <ComboBox
+            DisplayMemberBinding="{Binding DisplayName}"
+            ItemsSource="{x:Static localization:Localizer.Languages}"
+            SelectedItem="{Binding SelectedLanguage}" />
+        <Label Content="{Localize {x:Static translations:TranslationKey.GenshinTitle}}" />
     </StackPanel>
 </UserControl>
