@@ -26,30 +26,6 @@ public abstract class Game : SmartEnum<Game, string>
     public virtual FrozenSet<GameServer> Servers { get; } =
         [GameServer.Global, GameServer.China, GameServer.Bilibili];
 
-    // public static Game FromGameBiz(GameBiz gameBiz)
-    // {
-    //     switch (gameBiz)
-    //     {
-    //         case var _ when gameBiz == GameBiz.Genshin:
-    //         case var _ when gameBiz == GameBiz.GenshinGlobal:
-    //         case var _ when gameBiz == GameBiz.GenshinChina:
-    //         case var _ when gameBiz == GameBiz.GenshinBilibili:
-    //             return Genshin;
-    //         case var _ when gameBiz == GameBiz.StarRail:
-    //         case var _ when gameBiz == GameBiz.StarRailGlobal:
-    //         case var _ when gameBiz == GameBiz.StarRailChina:
-    //         case var _ when gameBiz == GameBiz.StarRailBilibili:
-    //             return StarRail;
-    //         case var _ when gameBiz == GameBiz.Zenless:
-    //         case var _ when gameBiz == GameBiz.ZenlessGlobal:
-    //         case var _ when gameBiz == GameBiz.ZenlessChina:
-    //         case var _ when gameBiz == GameBiz.ZenlessBilibili:
-    //             return Zenless;
-    //         default:
-    //             throw new ArgumentOutOfRangeException(nameof(gameBiz), @"Unknown GameBiz");
-    //     }
-    // }
-
     public GameBiz ToGameBiz(GameServer gameServer) =>
         GameBiz.TryFromName($"{Value}_{gameServer.Value}", out var gameBiz)
             ? gameBiz

@@ -48,7 +48,6 @@ public abstract class GameBiz : SmartEnum<GameBiz, string>
 
     #endregion
 
-
     private GameBiz(string value, GameServer server)
         : base(value, value)
     {

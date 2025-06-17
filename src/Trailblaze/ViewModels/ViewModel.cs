@@ -26,6 +26,7 @@ public abstract partial class ViewModel : ObservableRecipient, IDisposable
     public ISukiDialogManager DialogManager => LazySukiDialogManager.Value;
     public ISukiToastManager ToastManager => LazySukiToastManager.Value;
 
+    // ReSharper disable once CollectionNeverQueried.Global
     public CompositeDisposable Disposables { get; } = new();
 
     public AppSettings AppSettings { get; } =
