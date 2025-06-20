@@ -38,9 +38,7 @@ public abstract class BaseLocalizer : ILocalizer
                 return;
 
             CurrentLanguage = value;
-
             OnLanguageChanged();
-
             FireLanguageChanged();
         }
     }

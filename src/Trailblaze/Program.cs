@@ -1,15 +1,17 @@
 ﻿using System.Diagnostics.CodeAnalysis;
 using Avalonia;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using Trailblaze.Avalonia.Hosting;
 using Trailblaze.Common;
+using Trailblaze.Common.Helpers;
 using Velopack;
 using Windows.Win32;
 using Windows.Win32.Foundation;
 using Windows.Win32.UI.WindowsAndMessaging;
-using ZLogger;
 
 namespace Trailblaze;
 
@@ -21,15 +23,18 @@ public static class Program
     [STAThread]
     public static void Main(string[] args)
     {
-        VelopackApp.Build().Run();
+        Log.Logger = new LoggerConfiguration().WriteTo.Console().CreateBootstrapLogger();
+        VelopackApp.Build().SetArgs(args).SetLogger(new VelopackSerilogLogger()).Run();
+
         var builder = Host.CreateApplicationBuilder(args);
+        builder.Configuration.AddJsonFile(PathHelper.SettingsPath, false);
         builder.AddAvaloniaHosting<App>(
             (sp, appBuilder) =>
                 appBuilder
                     .UsePlatformDetect()
                     .UseR3(ex =>
                         sp.GetRequiredService<ILogger<App>>()
-                            .ZLogError(ex, $"An unhandled exception occurred")
+                            .LogError(ex, "An unhandled exception occurred")
                     )
                     .LogToTrace()
         );
@@ -43,12 +48,11 @@ public static class Program
         }
         catch (Exception ex)
         {
-            var logger = app.Services.GetRequiredService<ILogger<App>>();
-            logger.ZLogError(ex, $"An unhandled exception occurred");
+            Log.Error(ex, "{Name} Fatal Error", AppHelper.Name);
             _ = PInvoke.MessageBox(
                 new HWND(0),
                 ex.Message,
-                $"{AppInformation.Name} Fatal Error",
+                $"{AppHelper.Name} Fatal Error",
                 MESSAGEBOX_STYLE.MB_ICONERROR
             );
             throw;
@@ -56,6 +60,7 @@ public static class Program
         finally
         {
             app.Dispose();
+            Log.CloseAndFlush();
         }
     }
 

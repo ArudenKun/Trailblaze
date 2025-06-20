@@ -21,6 +21,7 @@ public sealed class App : Application
     private readonly ViewLocator _viewLocator;
     private readonly IServiceProvider _serviceProvider;
     private readonly ReplicantImageLoader _replicantImageLoader;
+    private readonly ThemeService _themeService;
 
     // ReSharper disable once ArrangeModifiersOrder
     public static new App Current => (App)Application.Current!;
@@ -28,12 +29,14 @@ public sealed class App : Application
     public App(
         ViewLocator viewLocator,
         IServiceProvider serviceProvider,
-        ReplicantImageLoader replicantImageLoader
+        ReplicantImageLoader replicantImageLoader,
+        ThemeService themeService
     )
     {
         _viewLocator = viewLocator;
         _serviceProvider = serviceProvider;
         _replicantImageLoader = replicantImageLoader;
+        _themeService = themeService;
     }
 
     public override void Initialize()
@@ -49,6 +52,8 @@ public sealed class App : Application
             PathHelper.CacheDirectory,
             EnvironmentVariableTarget.Process
         );
+
+        _themeService.Initialize();
 
         ImageLoader.AsyncImageLoader = _replicantImageLoader;
         ImageBrushLoader.AsyncImageLoader = _replicantImageLoader;

@@ -1,9 +1,12 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Credfeto.Enumeration.Source.Generation.Attributes;
+using SukiUI.Enums;
 
 namespace Trailblaze.Common.Extensions;
 
-public static class EnumExtensions
+[EnumText(typeof(SukiColor))]
+public static partial class EnumExtensions
 {
     public static IEnumerable<Enum> GetAllValues(this Type t, bool orderByName = false)
     {

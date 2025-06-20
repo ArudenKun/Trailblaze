@@ -19,7 +19,6 @@
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
-    <AdditionalFiles Include="Properties\NativeMethods.txt" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AsyncImageLoader.Avalonia" Version="3.3.0" />
@@ -30,6 +29,18 @@
       <PrivateAssets Condition="'$(Configuration)' != 'Debug'">All</PrivateAssets>
     </PackageReference>
     <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference
+      Include="Credfeto.Enumeration.Source.Generation"
+      Version="1.2.116.1247"
+      PrivateAssets="all"
+      ExcludeAssets="runtime"
+    />
+    <PackageReference
+      Include="Credfeto.Enumeration.Source.Generation.Attributes"
+      Version="1.2.116.1247"
+      PrivateAssets="All"
+      ExcludeAssets="runtime"
+    />
     <PackageReference Include="CSharpier.MsBuild" Version="1.0.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -37,18 +48,17 @@
     <PackageReference Include="HotAvalonia" Version="3.0.0" PrivateAssets="all" />
     <PackageReference Include="Lucide.Avalonia" Version="0.1.33" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.6" />
-    <PackageReference Include="Microsoft.Windows.CsWin32" Version="0.3.183">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
     <PackageReference Include="R3Extensions.Avalonia" Version="1.3.0" />
-    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.1.1">
+    <PackageReference Include="Riverside.Win32.UserInterface" Version="1.1.250615" />
+    <PackageReference Include="Serilog.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="Serilog.Sinks.AsyncFile" Version="2.0.0" />
+    <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
+    <PackageReference Include="ServiceScan.SourceGenerator" Version="2.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="SukiUI" Version="6.0.2" />
     <PackageReference Include="Svg.Controls.Avalonia" Version="11.3.0.1" />
-    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="9.0.6" />
     <PackageReference Include="Velopack" Version="0.0.1298" />
     <PackageReference Include="WebView2.Avalonia" Version="1.0.3240.44-preview.250526.1" />
     <PackageReference Include="Xaml.Behaviors.Avalonia" Version="11.3.0.10" />
@@ -61,5 +71,8 @@
     <ProjectReference Include="..\Trailblaze.Avalonia.Hosting\Trailblaze.Avalonia.Hosting.csproj" />
     <ProjectReference Include="..\Trailblaze.Core\Trailblaze.Core.csproj" />
     <ProjectReference Include="..\Trailblaze.Localization.Avalonia\Trailblaze.Localization.Avalonia.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Hosted\" />
   </ItemGroup>
 </Project>

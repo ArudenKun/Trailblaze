@@ -2,34 +2,25 @@
 using Ardalis.SmartEnum.SystemTextJson;
 using Avalonia.Controls;
 using CommunityToolkit.Mvvm.ComponentModel;
-using Microsoft.Extensions.Logging;
 using SukiUI.Enums;
 using Trailblaze.Common.Helpers;
 using Trailblaze.Core;
 using Trailblaze.Models;
-using ZLogger;
 
 namespace Trailblaze.Common.Settings;
 
 [INotifyPropertyChanged]
 public sealed partial class AppSettings : JsonFile, IDisposable
 {
-    private readonly ILogger<AppSettings> _logger;
-
-    public AppSettings(ILogger<AppSettings> logger)
-        : base(PathHelper.SettingsPath, AppJsonContext.Default)
-    {
-        _logger = logger;
-
-        Load();
-    }
+    public AppSettings()
+        : base(PathHelper.SettingsPath, AppJsonContext.Default) { }
 
     [ObservableProperty]
     [JsonConverter(typeof(SmartEnumNameConverter<GameBiz, string>))]
     public partial GameBiz GameBiz { get; set; } = GameBiz.GenshinGlobal;
 
     [ObservableProperty]
-    public partial ApplicationTheme Theme { get; set; } = ApplicationTheme.Default;
+    public partial AppTheme Theme { get; set; } = AppTheme.Default;
 
     [ObservableProperty]
     public partial string ThemeColor { get; set; } = nameof(SukiColor.Blue);
@@ -38,7 +29,7 @@ public sealed partial class AppSettings : JsonFile, IDisposable
     public partial bool CheckForUpdates { get; set; } = true;
 
     [ObservableProperty]
-    public partial DateTime LastUpdateDateTimeCheck { get; set; } = AppInformation.Born;
+    public partial DateTime LastUpdateDateTimeCheck { get; set; } = DateTime.MinValue;
 
     [ObservableProperty]
     public partial bool IsSideMenuExpanded { get; set; } = true;
@@ -56,29 +47,39 @@ public sealed partial class AppSettings : JsonFile, IDisposable
     [ObservableProperty]
     public partial WindowState LastWindowState { get; set; } = WindowState.Normal;
 
-    public override void Save()
-    {
-        _logger.ZLogInformation($"Saving {nameof(AppSettings)}");
-        base.Save();
-        _logger.ZLogInformation($"Saved {nameof(AppSettings)}");
-    }
+    public LoggerSettings Logger { get; init; } = new();
 
-    public override bool Load()
-    {
-        _logger.ZLogInformation($"Loading {nameof(AppSettings)}");
-        try
-        {
-            _logger.ZLogInformation($"Loaded {nameof(AppSettings)}");
-            return base.Load();
-        }
-        catch (Exception)
-        {
-            _logger.ZLogWarning($"Failed to load {nameof(AppSettings)}. Using default settings");
-            Reset();
-            Save();
-            return false;
-        }
-    }
-
+    // public override void Save()
+    // {
+    //     _logger.LogInformation("Saving {Name}", nameof(AppSettings));
+    //     base.Save();
+    //     _logger.LogInformation("Saved {Name}", nameof(AppSettings));
+    // }
+    //
+    // public override bool Load()
+    // {
+    //     _logger.LogInformation("Loading {Name}", nameof(AppSettings));
+    //     try
+    //     {
+    //         var isSuccess = base.Load();
+    //         if (isSuccess)
+    //         {
+    //             _logger.LogInformation("Loaded {Name}", nameof(AppSettings));
+    //         }
+    //         else
+    //         {
+    //             _logger.LogWarning("Failed to load {Name}, Using defaults", nameof(AppSettings));
+    //         }
+    //
+    //         return isSuccess;
+    //     }
+    //     catch (Exception)
+    //     {
+    //         _logger.LogWarning("Failed to load {Name}, Using defaults", nameof(AppSettings));
+    //         Reset();
+    //         Save();
+    //         return false;
+    //     }
+    // }
     public void Dispose() => Save();
 }

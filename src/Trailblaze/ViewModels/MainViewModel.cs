@@ -6,7 +6,6 @@ using Microsoft.Extensions.Logging;
 using Trailblaze.Models.Messages;
 using Trailblaze.ViewModels.Pages;
 using ZLinq;
-using ZLogger;
 
 namespace Trailblaze.ViewModels;
 
@@ -22,7 +21,7 @@ public sealed partial class MainViewModel
 
         foreach (var (i, page) in Pages.AsValueEnumerable().Index())
         {
-            logger.ZLogInformation($"Page {i + 1}: {page.DisplayName}");
+            logger.LogInformation("Page {Index}: {DisplayName}", i + 1, page.DisplayName);
         }
 
         ActivePage = Pages[0];

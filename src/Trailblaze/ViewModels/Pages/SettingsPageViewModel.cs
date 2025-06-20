@@ -1,32 +1,21 @@
-﻿using System.Collections.Generic;
-using System.ComponentModel;
-using Avalonia.Media;
-using Avalonia.Styling;
+﻿using System.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Lucide.Avalonia;
-using SukiUI;
 using SukiUI.Models;
 using Trailblaze.Models;
+using Trailblaze.Services;
 
 namespace Trailblaze.ViewModels.Pages;
 
 public sealed partial class SettingsPageViewModel : PageViewModel, ITransientViewModel
 {
-    public SettingsPageViewModel()
-    {
-        Theme = SukiTheme.GetInstance();
-        AvailableColors =
-        [
-            .. Theme.ColorThemes,
-            new SukiColorTheme("Pink", new Color(255, 255, 20, 147), new Color(255, 255, 192, 203)),
-            new SukiColorTheme("White", new Color(255, 255, 255, 255), new Color(255, 0, 0, 0)),
-            new SukiColorTheme("Black", new Color(255, 0, 0, 0), new Color(255, 255, 255, 255)),
-        ];
+    private readonly ThemeService _themeService;
 
-        IsSystemTheme = AppSettings.Theme is ApplicationTheme.Default;
-        IsLightTheme = AppSettings.Theme is ApplicationTheme.Light;
-        IsDarkTheme = AppSettings.Theme is ApplicationTheme.Dark;
+    public SettingsPageViewModel(ThemeService themeService)
+    {
+        _themeService = themeService;
+        ThemeService = themeService;
 
         IsVisibleOnSideMenu = false;
     }
@@ -36,7 +25,7 @@ public sealed partial class SettingsPageViewModel : PageViewModel, ITransientVie
     public override LucideIconKind Icon => LucideIconKind.Settings;
     public override bool AutoHideOnSideMenu => true;
 
-    public SukiTheme Theme { get; }
+    public ThemeService ThemeService { get; }
 
     [ObservableProperty]
     public partial bool IsSystemTheme { get; set; }
@@ -47,14 +36,8 @@ public sealed partial class SettingsPageViewModel : PageViewModel, ITransientVie
     [ObservableProperty]
     public partial bool IsDarkTheme { get; set; }
 
-    public IReadOnlyList<SukiColorTheme> AvailableColors { get; }
-
     [RelayCommand]
-    public void SwitchToColorTheme(SukiColorTheme color)
-    {
-        AppSettings.ThemeColor = color.DisplayName;
-        Theme.ChangeColorTheme(color);
-    }
+    public void SwitchToColorTheme(SukiColorTheme color) => _themeService.SwitchColorTheme(color);
 
     protected override void OnPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -63,42 +46,23 @@ public sealed partial class SettingsPageViewModel : PageViewModel, ITransientVie
             case nameof(IsSystemTheme):
             {
                 if (IsSystemTheme)
-                    ChangeBaseTheme(ApplicationTheme.Default);
+                    _themeService.ChangeBaseTheme(AppTheme.Default);
                 break;
             }
             case nameof(IsLightTheme):
             {
                 if (IsLightTheme)
-                    ChangeBaseTheme(ApplicationTheme.Light);
+                    _themeService.ChangeBaseTheme(AppTheme.Light);
                 break;
             }
             case nameof(IsDarkTheme):
             {
                 if (IsDarkTheme)
-                    ChangeBaseTheme(ApplicationTheme.Dark);
+                    _themeService.ChangeBaseTheme(AppTheme.Dark);
                 break;
             }
         }
 
         base.OnPropertyChanged(e);
-    }
-
-    private void ChangeBaseTheme(ApplicationTheme theme)
-    {
-        AppSettings.Theme = theme;
-        switch (theme)
-        {
-            case ApplicationTheme.Default:
-                Theme.ChangeBaseTheme(ThemeVariant.Default);
-                break;
-            case ApplicationTheme.Light:
-                Theme.ChangeBaseTheme(ThemeVariant.Light);
-                break;
-            case ApplicationTheme.Dark:
-                Theme.ChangeBaseTheme(ThemeVariant.Dark);
-                break;
-            default:
-                throw new ArgumentOutOfRangeException(nameof(theme), theme, null);
-        }
     }
 }

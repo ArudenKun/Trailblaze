@@ -26,29 +26,23 @@ public class ResXLocalizer : BaseLocalizer
                 try
                 {
                     string dirName = Path.GetFileName(dir);
-                    if (dirName.Length > 0 && dirName.ToLower() != "bin")
+                    CultureInfo ci = CultureInfo.GetCultureInfo(dirName);
+                    string resourcePath = Path.Combine(dir, $"{assemblyName}.resources.dll");
+                    if (File.Exists(resourcePath))
                     {
-                        CultureInfo ci = CultureInfo.GetCultureInfo(dirName);
-                        string resourcePath = Path.Combine(dir, $"{assemblyName}.resources.dll");
-                        if (File.Exists(resourcePath))
-                        {
-                            CurrentLanguages.Add(ci);
-                        }
+                        CurrentLanguages.Add(ci);
                     }
                 }
-                catch (ArgumentException)
+                catch (Exception)
                 {
-                    // Not a valid culture name
+                    // ignored
                 }
             }
         }
 
         ValidateLanguage();
-
         Translation.Culture = CurrentLanguage;
-
         HasLoaded = true;
-
         UpdateDisplayLanguages();
     }
 
@@ -60,6 +54,6 @@ public class ResXLocalizer : BaseLocalizer
             Reload();
 
         var langString = Translation.ResourceManager.GetString(key, Translation.Culture);
-        return langString != null ? langString.Replace("\\n", "\n") : $"{Language}:{key}";
+        return langString is not null ? langString.Replace("\\n", "\n") : $"{Language}:{key}";
     }
 }

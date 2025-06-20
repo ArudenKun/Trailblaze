@@ -2,7 +2,7 @@
 
 namespace Trailblaze.Models;
 
-public enum ApplicationTheme
+public enum AppTheme
 {
     [Description("Default from system")]
     Default,

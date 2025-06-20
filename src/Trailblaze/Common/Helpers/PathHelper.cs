@@ -6,17 +6,17 @@ namespace Trailblaze.Common.Helpers;
 
 public static class PathHelper
 {
-    private static IVelopackLocator Locator => VelopackLocator.Current;
-
     /// <summary>
     ///     Returns the directory from which the application is run.
     /// </summary>
-    public static string AppDirectory => Locator.RootAppDir ?? AppContext.BaseDirectory;
+    public static string AppDirectory =>
+        VelopackLocator.Current.RootAppDir ?? AppContext.BaseDirectory;
 
-    public static string AppContentDirectory => Locator.AppContentDir ?? AppContext.BaseDirectory;
+    public static string AppContentDirectory =>
+        VelopackLocator.Current.AppContentDir ?? AppContext.BaseDirectory;
 
     public static string AppTempDirectory =>
-        Locator.AppTempDir ?? Path.GetTempPath().CombinePath(AppInformation.Name);
+        VelopackLocator.Current.AppTempDir ?? Path.GetTempPath().CombinePath(AppHelper.Name);
 
     /// <summary>
     ///     Returns the path of the roaming directory.
@@ -35,13 +35,9 @@ public static class PathHelper
     /// </summary>
     public static string DataDirectory =>
         // File.Exists(".portable") || Directory.Exists("data")
-#if DEBUG
-        AppDirectory.CombinePath("data");
-#else
-        Locator.IsPortable
+        VelopackLocator.Current.IsPortable || AppHelper.IsDebug
             ? AppDirectory.CombinePath("data")
-            : RoamingDirectory.CombinePath(AppInformation.Name);
-#endif
+            : RoamingDirectory.CombinePath(AppHelper.Name);
 
     public static string CacheDirectory => DataDirectory.CombinePath("cache");
 
@@ -55,5 +51,5 @@ public static class PathHelper
     public static string SettingsPath => DataDirectory.CombinePath("settings.json");
 
     public static string DatabasePath =>
-        $"Data Source={DataDirectory.CombinePath($"{AppInformation.Name.ToLowerInvariant()}.db")}";
+        $"Data Source={DataDirectory.CombinePath($"{AppHelper.Name}.db")}";
 }

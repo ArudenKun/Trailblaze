@@ -6,9 +6,9 @@ namespace Trailblaze.Core.HoyoPlay;
 [ValueObject<string>]
 public sealed partial record LauncherId
 {
-    public static readonly LauncherId ChinaOfficial = From("jGHBHlcOq1");
+    public static readonly LauncherId China = From("jGHBHlcOq1");
 
-    public static readonly LauncherId GlobalOfficial = From("VYTpXlbWo8");
+    public static readonly LauncherId Global = From("VYTpXlbWo8");
 
     public static readonly LauncherId BilibiliGenshin = From("umfgRO5gh5");
 
@@ -16,14 +16,11 @@ public sealed partial record LauncherId
 
     public static readonly LauncherId BilibiliZenless = From("xV0f4r1GT0");
 
-    public static bool IsChinaOfficial(string launcherId) => From(launcherId) == ChinaOfficial;
+    public bool IsChina => this == China;
+    public bool IsGlobal => this == Global;
 
-    public static bool IsGlobalOfficial(string launcherId) => From(launcherId) == GlobalOfficial;
-
-    public static bool IsBilibili(string launcherId) =>
-        From(launcherId) == BilibiliGenshin
-        || From(launcherId) == BilibiliStarRail
-        || From(launcherId) == BilibiliZenless;
+    public bool IsBilibili =>
+        this == BilibiliGenshin || this == BilibiliStarRail || this == BilibiliZenless;
 
     public static LauncherId FromGameBiz(GameBiz gameBiz)
     {
@@ -32,11 +29,11 @@ public sealed partial record LauncherId
             case var _ when gameBiz == GameBiz.GenshinChina:
             case var _ when gameBiz == GameBiz.StarRailChina:
             case var _ when gameBiz == GameBiz.ZenlessChina:
-                return ChinaOfficial;
+                return China;
             case var _ when gameBiz == GameBiz.GenshinGlobal:
             case var _ when gameBiz == GameBiz.StarRailGlobal:
             case var _ when gameBiz == GameBiz.ZenlessGlobal:
-                return GlobalOfficial;
+                return Global;
             case var _ when gameBiz == GameBiz.GenshinBilibili:
                 return BilibiliGenshin;
             case var _ when gameBiz == GameBiz.StarRailBilibili:
@@ -48,7 +45,7 @@ public sealed partial record LauncherId
         }
     }
 
-    // public static string? FromGameId(GameId gameId) => FromGameBiz(gameId.GameBiz);
+    public static LauncherId FromGameId(GameId gameId) => FromGameBiz(gameId.GameBiz);
 
     public static FrozenSet<(GameBiz GameBiz, LauncherId LauncherId)> BilibiliLaunchers { get; } =
         [

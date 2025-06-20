@@ -1,0 +1,17 @@
+﻿<Solution>
+  <Folder Name="/src/">
+    <Project Path="src\Trailblaze.Core\Trailblaze.Core.csproj" Type="Classic C#" />
+    <Project Path="src\Trailblaze.Translations\Trailblaze.Translations.csproj" Type="Classic C#" />
+    <Project Path="src\Trailblaze\Trailblaze.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/src/analyzers/" />
+  <Folder Name="/src/libs/">
+    <Project Path="src\Trailblaze.Avalonia.Hosting\Trailblaze.Avalonia.Hosting.csproj" Type="Classic C#" />
+    <Project Path="src\Trailblaze.Localization.Avalonia\Trailblaze.Localization.Avalonia.csproj" Type="Classic C#" />
+    <Project Path="src\Trailblaze.Localization\Trailblaze.Localization.csproj" Type="Classic C#" />
+  </Folder>
+  <Folder Name="/_solution/">
+    <File Path=".gitignore" />
+    <File Path="Directory.Build.props" />
+  </Folder>
+</Solution>

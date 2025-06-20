@@ -3,11 +3,13 @@ using System.Net;
 using System.Net.Http;
 using System.Text.Json.Serialization.Metadata;
 using Avalonia.Controls;
-using Humanizer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Replicant;
+using Serilog;
+using Serilog.Core;
+using Serilog.Sinks.AsyncFile;
 using ServiceScan.SourceGenerator;
 using Trailblaze.Common;
 using Trailblaze.Common.Extensions;
@@ -18,8 +20,6 @@ using Trailblaze.Services;
 using Trailblaze.ViewModels;
 using Trailblaze.Views.Abstractions;
 using ZLinq;
-using ZLogger;
-using ZLogger.Providers;
 
 namespace Trailblaze;
 
@@ -27,51 +27,46 @@ public static partial class DependencyInjection
 {
     public static IHostApplicationBuilder AddTrailblaze(this IHostApplicationBuilder builder)
     {
-        builder.Logging.ClearProviders()
-            .SetMinimumLevel(LogLevel.Debug)
-            .AddZLoggerConsole(options => options.UseDefaultPlainTextFormatter())
-            .AddZLoggerRollingFile((options) =>
-            {
-                options.FilePathSelector = (timestamp, sequenceNumber) =>
-                    PathHelper.LogsDirectory.CombinePath(
-                        $"{timestamp.ToLocalTime():yyyy-MM}_{sequenceNumber:000}.log"
-                    );
-                options.RollingInterval = RollingInterval.Month;
-                options.RollingSizeKB = (int)2.Gigabytes().Kilobytes;
-                options.UseDefaultPlainTextFormatter();
-            });
-
-        builder.Services
-            .AddViews()
+        builder.Services.AddOptions<AppSettings>().Bind(builder.Configuration);
+        builder.Services.AddSingleton<AppSettings>(sp =>
+            sp.GetRequiredService<IOptions<AppSettings>>().Value
+        );
+        builder.Services.AddSingleton(sp => new LoggingLevelSwitch(
+            sp.GetRequiredService<AppSettings>().Logger.LogLevel
+        ));
+        builder.Services.AddSerilog(
+            (sp, configuration) =>
+                configuration
+                    .ReadFrom.Services(sp)
+                    .WriteTo.Console()
+                    .WriteTo.AsyncFile(PathHelper.LogsDirectory.CombinePath("log.txt"))
+                    .Enrich.FromLogContext()
+        );
+        builder
+            .Services.AddViews()
             .AddViewModels()
             .AddSingleton<ViewLocator>()
             .AddSingleton<IJsonTypeInfoResolver>(AppJsonContext.Default)
             .AddSingleton(AppJsonContext.Default.Options)
-            .AddSingleton<AppSettings>()
             .AddSingleton<ViewModelFactory>()
+            .AddSingleton<ThemeService>()
             .AddSingleton<ReplicantImageLoader>()
-            .AddSingleton(sp =>
-                new HttpCache(PathHelper.CacheDirectory,
-                    () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()))
+            .AddSingleton(sp => new HttpCache(
+                PathHelper.CacheDirectory,
+                () => sp.GetRequiredService<IHttpClientFactory>().CreateClient()
+            ))
             .AddSingleton<IHttpCache>(sp => sp.GetRequiredService<HttpCache>());
 
         builder.Services.AddHttpClient();
-        builder.Services.AddHttpClient<HoyoPlayClient>()
-            .ConfigureHttpClient(httpClient => httpClient.DefaultRequestVersion = HttpVersion.Version20)
-            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
-            {
-                AutomaticDecompression = DecompressionMethods.All
-            });
+        builder
+            .Services.AddHttpClient<HoyoPlayClient>()
+            .ConfigureHttpClient(httpClient =>
+                httpClient.DefaultRequestVersion = HttpVersion.Version20
+            )
+            .ConfigurePrimaryHttpMessageHandler(() =>
+                new HttpClientHandler { AutomaticDecompression = DecompressionMethods.All }
+            );
         return builder;
-    }
-
-    private static void UseDefaultPlainTextFormatter(this ZLoggerOptions options)
-    {
-        options.UsePlainTextFormatter(formatter =>
-        {
-            formatter.SetPrefixFormatter($"[{0} {1,-11}] ",
-                (in template, in info) => template.Format(info.Timestamp, info.LogLevel));
-        });
     }
 
     [GenerateServiceRegistrations(
@@ -94,11 +89,9 @@ public static partial class DependencyInjection
         services.Add(new ServiceDescriptor(type, type, lifeTime));
         foreach (var baseType in type.EnumerateBaseTypes())
         {
-            services.Add(new ServiceDescriptor(
-                baseType,
-                sp => sp.GetRequiredService(type),
-                lifeTime
-            ));
+            services.Add(
+                new ServiceDescriptor(baseType, sp => sp.GetRequiredService(type), lifeTime)
+            );
         }
     }
 
@@ -109,15 +102,19 @@ public static partial class DependencyInjection
     private static partial IServiceCollection AddViews(this IServiceCollection services);
 
     private static void AddViewsHandler<
-        [DynamicallyAccessedMembers(DynamicallyAccessedMemberTypes.Interfaces |
-                                    DynamicallyAccessedMemberTypes.PublicConstructors)]
-        TView
+        [DynamicallyAccessedMembers(
+            DynamicallyAccessedMemberTypes.Interfaces
+                | DynamicallyAccessedMemberTypes.PublicConstructors
+        )]
+            TView
     >(this IServiceCollection services)
         where TView : Control
     {
         var type = typeof(TView);
-        var viewInterfaces = type.GetInterfaces().AsValueEnumerable()
-            .Where(s => s.FullName!.StartsWith(typeof(IView).FullName!)).ToArray();
+        var viewInterfaces = type.GetInterfaces()
+            .AsValueEnumerable()
+            .Where(s => s.FullName!.StartsWith(typeof(IView).FullName!))
+            .ToArray();
 
         if (viewInterfaces.Length > 2)
         {

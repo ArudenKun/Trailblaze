@@ -9,6 +9,7 @@ public class LocalizeExtension : MarkupExtension, IObservable<string>, IDisposab
     private readonly string _key;
 
     private IObserver<string>? _observer;
+    private bool _disposed;
 
     public LocalizeExtension(string key)
     {
@@ -34,11 +35,15 @@ public class LocalizeExtension : MarkupExtension, IObservable<string>, IDisposab
     /// <inheritdoc cref="IDisposable"/>>
     protected virtual void Dispose(bool disposing)
     {
+        if (_disposed)
+            return;
+
         if (!disposing)
             return;
 
         Localizer.LanguageChanged -= OnLanguageChanged;
         _observer = null;
+        _disposed = true;
     }
 
     /// <inheritdoc />
